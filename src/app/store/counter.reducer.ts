@@ -8,17 +8,20 @@ export const counterReducer = createReducer(
   // Set isBusy true on base actions
   on(CounterActions.increment, CounterActions.decrement, CounterActions.reset, (state) => ({
     ...state,
-    isBusy: true
+    isBusy: true,
+    error: null
   })),
-  // Success actions: update value, reset isBusy
+  // Success actions: update value, reset isBusy, clear error
   on(CounterActions.incrementSuccess, CounterActions.decrementSuccess, CounterActions.resetSuccess, (state, { newValue }) => ({
     ...state,
     value: newValue,
-    isBusy: false
+    isBusy: false,
+    error: null
   })),
-  // Failure actions: reset isBusy only
-  on(CounterActions.incrementFailure, CounterActions.decrementFailure, CounterActions.resetFailure, (state) => ({
+  // Failure actions: reset isBusy, set error
+  on(CounterActions.incrementFailure, CounterActions.decrementFailure, CounterActions.resetFailure, (state, { error }) => ({
     ...state,
-    isBusy: false
+    isBusy: false,
+    error
   }))
 );

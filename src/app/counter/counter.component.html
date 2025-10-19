@@ -8,6 +8,9 @@
     <div *ngIf="isBusy$ | async" class="loading-indicator">
         <span>Loading...</span>
     </div>
+    <div *ngIf="error$ | async as error" class="error-message">
+        <span>{{ error }}</span>
+    </div>
     <div class="counter-buttons">
         <button class="counter-btn increment" (click)="increment()" [disabled]="isBusy$ | async">▲ Increment</button>
         <button class="counter-btn decrement" (click)="decrement()" [disabled]="isBusy$ | async">▼ Decrement</button>

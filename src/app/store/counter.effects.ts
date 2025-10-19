@@ -1,58 +1,70 @@
-
-import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import * as CounterActions from './counter.actions';
-import { MockApiService } from './mockApi.service';
-import { Store } from '@ngrx/store';
-import { CounterState } from './counter.state';
-import { selectCounter } from './counter.selectors';
-import { switchMap, map, catchError, withLatestFrom } from 'rxjs/operators';
-import { of } from 'rxjs';
-
+import {Injectable} from "@angular/core";
+import {Actions, createEffect, ofType} from "@ngrx/effects";
+import {
+  increment,
+  incrementSuccess,
+  incrementFailure,
+  decrement,
+  decrementSuccess,
+  decrementFailure,
+  reset,
+  resetSuccess,
+  resetFailure,
+} from "./counter.actions";
+import {switchMap, map, catchError, withLatestFrom} from "rxjs/operators";
+import {of} from "rxjs";
+import {MockApiService} from "./mockApi.service";
+import {Store} from "@ngrx/store";
+import {AppState} from "./index";
+import {selectCounterValue} from "./counter.selectors";
 
 @Injectable()
 export class CounterEffects {
+  increment$;
+  decrement$;
+  reset$;
+
   constructor(
     private actions$: Actions,
     private mockApi: MockApiService,
-    private store: Store<{ counter: CounterState }>
-  ) {}
-
-  increment$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(CounterActions.increment),
-  withLatestFrom(this.store.select(selectCounter)),
-      switchMap(([_, counterState]) =>
-        this.mockApi.increment(counterState.value).pipe(
-          map((newValue) => CounterActions.incrementSuccess(newValue)),
-          catchError((error) => of(CounterActions.incrementFailure(error.message)))
+    private store: Store<AppState>
+  ) {
+    this.increment$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(increment),
+        withLatestFrom(this.store.select(selectCounterValue)),
+        switchMap(([_, counterValue]) =>
+          this.mockApi.increment(counterValue).pipe(
+            map((newValue) => incrementSuccess(newValue)),
+            catchError((error) => of(incrementFailure(error.message)))
+          )
         )
       )
-    )
-  );
+    );
 
-  decrement$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(CounterActions.decrement),
-  withLatestFrom(this.store.select(selectCounter)),
-      switchMap(([_, counterState]) =>
-        this.mockApi.decrement(counterState.value).pipe(
-          map((newValue) => CounterActions.decrementSuccess(newValue)),
-          catchError((error) => of(CounterActions.decrementFailure(error.message)))
+    this.decrement$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(decrement),
+        withLatestFrom(this.store.select(selectCounterValue)),
+        switchMap(([_, counterValue]) =>
+          this.mockApi.decrement(counterValue).pipe(
+            map((newValue) => decrementSuccess(newValue)),
+            catchError((error) => of(decrementFailure(error.message)))
+          )
         )
       )
-    )
-  );
+    );
 
-  reset$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(CounterActions.reset),
-      switchMap(() =>
-        this.mockApi.reset().pipe(
-          map((newValue) => CounterActions.resetSuccess(newValue)),
-          catchError((error) => of(CounterActions.resetFailure(error.message)))
+    this.reset$ = createEffect(() =>
+      this.actions$.pipe(
+        ofType(reset),
+        switchMap(() =>
+          this.mockApi.reset().pipe(
+            map((newValue) => resetSuccess(newValue)),
+            catchError((error) => of(resetFailure(error.message)))
+          )
         )
       )
-    )
-  );
+    );
+  }
 }

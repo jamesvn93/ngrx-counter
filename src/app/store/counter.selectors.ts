@@ -10,6 +10,11 @@ export const selectCounterValue = createSelector(
   (counterState: CounterState) => counterState.value
 );
 
+export const selectCounterError = createSelector(
+  selectCounter,
+  (counterState: CounterState) => counterState.error
+);
+
 export const selectCounterIsBusy = createSelector(
   selectCounter,
   (counterState: CounterState) => counterState.isBusy
