@@ -2,7 +2,7 @@ import {Component} from "@angular/core";
 import {Store} from "@ngrx/store";
 import {AppState} from "../store";
 import {increment, decrement, reset} from "../store/counter.actions";
-import {selectCounterValue} from "../store/counter.selectors";
+import {selectCounterValue, selectCounterIsBusy} from "../store/counter.selectors";
 import {CommonModule} from "@angular/common";
 import { Observable, Subject } from "rxjs";
 
@@ -15,11 +15,13 @@ import { Observable, Subject } from "rxjs";
 })
 export class CounterComponent {
   public counter$: Observable<number> = new Subject<number>();
+  public isBusy$: Observable<boolean> = new Subject<boolean>();
 
   constructor(private store: Store<AppState>) {}
 
   ngOnInit() {
     this.counter$ = this.store.select(selectCounterValue);
+    this.isBusy$ = this.store.select(selectCounterIsBusy);
   }
 
   increment() {

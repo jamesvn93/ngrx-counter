@@ -5,9 +5,12 @@
         <span>Current value:</span>
         <span class="value">{{ counter$ | async }}</span>
     </div>
+    <div *ngIf="isBusy$ | async" class="loading-indicator">
+        <span>Loading...</span>
+    </div>
     <div class="counter-buttons">
-        <button class="counter-btn increment" (click)="increment()">▲ Increment</button>
-        <button class="counter-btn decrement" (click)="decrement()">▼ Decrement</button>
-        <button class="counter-btn reset" (click)="reset()">⟳ Reset</button>
+        <button class="counter-btn increment" (click)="increment()" [disabled]="isBusy$ | async">▲ Increment</button>
+        <button class="counter-btn decrement" (click)="decrement()" [disabled]="isBusy$ | async">▼ Decrement</button>
+        <button class="counter-btn reset" (click)="reset()" [disabled]="isBusy$ | async">⟳ Reset</button>
     </div>
 </div>

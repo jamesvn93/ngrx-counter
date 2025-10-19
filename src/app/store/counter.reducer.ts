@@ -1,10 +1,24 @@
+
 import { createReducer, on } from '@ngrx/store';
-import { increment, decrement, reset } from './counter.actions';
+import * as CounterActions from './counter.actions';
 import { CounterState, initialCounterState } from './counter.state';
 
 export const counterReducer = createReducer(
   initialCounterState,
-  on(increment, (state) => ({ ...state, value: state.value + 1 })),
-  on(decrement, (state) => ({ ...state, value: state.value - 1 })),
-  on(reset, (state) => ({ ...state, value: 0 }))
+  // Set isBusy true on base actions
+  on(CounterActions.increment, CounterActions.decrement, CounterActions.reset, (state) => ({
+    ...state,
+    isBusy: true
+  })),
+  // Success actions: update value, reset isBusy
+  on(CounterActions.incrementSuccess, CounterActions.decrementSuccess, CounterActions.resetSuccess, (state, { newValue }) => ({
+    ...state,
+    value: newValue,
+    isBusy: false
+  })),
+  // Failure actions: reset isBusy only
+  on(CounterActions.incrementFailure, CounterActions.decrementFailure, CounterActions.resetFailure, (state) => ({
+    ...state,
+    isBusy: false
+  }))
 );
